@@ -1,6 +1,7 @@
 /***************************************************************************
  * File:  CourseRegistration.java Course materials (23S) CST 8277
  * 
+ * @author Felipe Barbosa
  * @author Teddy Yap
  * @author Shariar (Shawn) Emami
  * @date August 28, 2022
