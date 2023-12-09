@@ -18,6 +18,11 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -25,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * The persistent class for the student database table.
  */
 @SuppressWarnings("unused")
+@Entity
 //TODO ST01 - Add the missing annotations.
 //TODO ST02 - Do we need a mapped super class? If so, which one?
 public class Student extends PojoBase implements Serializable {
@@ -35,16 +41,31 @@ public class Student extends PojoBase implements Serializable {
     }
 
     // TODO ST03 - Add annotation
+    @Column(name = "first_name")
 	private String firstName;
 
 	// TODO ST04 - Add annotation
+    @Column(name = "last_name")
 	private String lastName;
-
+    
 	// TODO ST05 - Add annotations for 1:M relation.  Changes should not cascade.
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<MembershipCard> membershipCards = new HashSet<>();
 
 	// TODO ST06 - Add annotations for 1:M relation.  Changes should not cascade.
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<CourseRegistration> courseRegistrations = new HashSet<>();
+    
+    @OneToOne(mappedBy = "student")
+    private SecurityUser securityUser;
+    
+    public SecurityUser getSecurityUser() {
+    	return securityUser;
+    }
+    
+    public void setSecurityUser(SecurityUser securityUser) {
+    	this.securityUser = securityUser;
+    }
 
 	public String getFirstName() {
 		return firstName;

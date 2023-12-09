@@ -20,23 +20,40 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+
 @SuppressWarnings("unused")
 
 /**
  * User class used for (JSR-375) Java EE Security authorization/authentication
  */
-
+@Entity
+@NamedQuery(name="SecurityUSer.userByName", query="SELECT u FROM SecurityUser u WHERE u.username = :param1")
 //TODO - Make this into JPA entity and add all the necessary annotations
 public class SecurityUser implements Serializable, Principal {
     /** Explicit set serialVersionUID */
     private static final long serialVersionUID = 1L;
-
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected int id;
     
+    @Column(unique = true, nullable = false)
     protected String username;
     
+    @Column(nullable = false)
     protected String pwHash;
     
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_id", referencedColumnName = "id")
     protected Student student;
     
     protected Set<SecurityRole> roles = new HashSet<SecurityRole>();
