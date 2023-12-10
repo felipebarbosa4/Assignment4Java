@@ -28,6 +28,7 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.security.enterprise.SecurityContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -116,4 +117,28 @@ public class StudentResource {
         response = Response.ok(professor).build();
         return response;
     }
+    
+    @POST
+    @RolesAllowed({ADMIN_ROLE})
+    public Response addStudent(Student student) {
+        LOG.debug("Adding new student...");
+        Student persistedStudent = service.persistStudent(student);
+        return Response.ok(persistedStudent).build();
+    }
+
+    @DELETE
+    @RolesAllowed({ADMIN_ROLE})
+    @Path(RESOURCE_PATH_ID_PATH)
+    public Response deleteStudent(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id) {
+        LOG.debug("Deleting student with ID: " + id);
+        boolean isDeleted = service.deleteStudent(id);
+        if (isDeleted) {
+            return Response.ok().build();
+        } else {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+    }
+    
+    
+    
 }

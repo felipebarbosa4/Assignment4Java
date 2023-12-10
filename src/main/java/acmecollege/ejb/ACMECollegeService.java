@@ -92,6 +92,7 @@ public class ACMECollegeService implements Serializable {
         return em.find(Student.class, id);
     }
 
+
     @Transactional
     public Student persistStudent(Student newStudent) {
         em.persist(newStudent);
@@ -112,7 +113,11 @@ public class ACMECollegeService implements Serializable {
         String pwHash = pbAndjPasswordHash.generate(DEFAULT_USER_PASSWORD.toCharArray());
         userForNewStudent.setPwHash(pwHash);
         userForNewStudent.setStudent(newStudent);
-        SecurityRole userRole = /* TODO ACMECS01 - Use NamedQuery on SecurityRole to find USER_ROLE */ null;
+        /* TODO ACMECS01 - Use NamedQuery on SecurityRole to find USER_ROLE */
+        // FELIPE : Modified SecurityRole userRole
+        SecurityRole userRole = em.createNamedQuery("SecurityRole.findByName", SecurityRole.class)
+                .setParameter("roleName", USER_ROLE)
+                .getSingleResult();
         userForNewStudent.getRoles().add(userRole);
         userRole.getUsers().add(userForNewStudent);
         em.persist(userForNewStudent);
@@ -168,17 +173,20 @@ public class ACMECollegeService implements Serializable {
      */
     @Transactional
     public void deleteStudentById(int id) {
-        Student student = getStudentById(id);
+        Student student = em.find(Student.class, id);
         if (student != null) {
-            em.refresh(student);
-            TypedQuery<SecurityUser> findUser = 
-                /* TODO ACMECS02 - Use NamedQuery on SecurityRole to find this related Student
-                   so that when we remove it, the relationship from SECURITY_USER table
-                   is not dangling
-                */ null;
-            SecurityUser sUser = findUser.getSingleResult();
-            em.remove(sUser);
-            em.remove(student);
+        	// FELIPE MODIFIED
+        	// NEED TASK 1/2 to ensure that your EntityManager is using this NamedQuery correctly 
+        	// in the deleteStudentById method in our EJB service class:
+            // Assuming we have a NamedQuery "SecurityUser.findByStudentId" in SecurityUser entity
+            TypedQuery<SecurityUser> findUserQuery = em.createNamedQuery("SecurityUser.findByStudentId", SecurityUser.class)
+                                                       .setParameter("studentId", id);
+            List<SecurityUser> users = findUserQuery.getResultList();
+            if (!users.isEmpty()) {
+                SecurityUser sUser = users.get(0); // Get the first SecurityUser
+                em.remove(sUser); // Remove the SecurityUser
+            }
+            em.remove(student); // Remove the student
         }
     }
     
@@ -192,6 +200,14 @@ public class ACMECollegeService implements Serializable {
     // Why not use the build-in em.find?  The named query SPECIFIC_STUDENT_CLUB_QUERY_NAME
     // includes JOIN FETCH that we cannot add to the above API
     public StudentClub getStudentClubById(int id) {
+    	/*
+    	 *  TO-DO (ADDED BY FELIPE)
+			The SPECIFIC_STUDENT_CLUB_QUERY_NAME is a constant that would 
+			refer to the name of a NamedQuery defined within the StudentClub 
+			entity class. The NamedQuery would be expected to perform a specific 
+			query on the StudentClub entity, potentially involving a JOIN FETCH to 
+			eagerly load related entities.
+    	 */
         TypedQuery<StudentClub> specificStudentClubQuery = em.createNamedQuery(SPECIFIC_STUDENT_CLUB_QUERY_NAME, StudentClub.class);
         specificStudentClubQuery.setParameter(PARAM1, id);
         return specificStudentClubQuery.getSingleResult();
