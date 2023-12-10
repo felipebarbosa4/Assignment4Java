@@ -48,6 +48,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import acmecollege.entity.CourseRegistration;
 import acmecollege.entity.Student;
 
 @SuppressWarnings("unused")
@@ -100,4 +101,5 @@ public class TestACMECollegeSystem {
         assertThat(students, is(not(empty())));
         assertThat(students, hasSize(1));
     }
+    
 }

@@ -5,11 +5,10 @@
  * @author Shariar (Shawn) Emami
  * @author Mike Norman
  * 
- * Updated by:  Group NN
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
+ *  Updated by:  Group 01
+ *   040878158, Adam , Jenah (as from ACSIS)
+ *   studentId, Felipe, Barbosa (as from ACSIS)
+ *   041070895, Chamini Savindya, Demuni (as from ACSIS)
  *   
  */
 package acmecollege.entity;
@@ -28,6 +27,7 @@ import javax.persistence.Embeddable;
  * The primary key class for the course_registration database table.
  */
 //TODO CRPK01 - What annotation is used to define an object which can be embedded in other entities?
+@Embeddable
 //Hint - @Access is used to establish where the annotation for JPA will be placed, field or properties. 
 @Access(AccessType.FIELD)
 public class CourseRegistrationPK implements Serializable {

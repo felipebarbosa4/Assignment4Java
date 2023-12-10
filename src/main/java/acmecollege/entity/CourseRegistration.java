@@ -5,11 +5,10 @@
  * @author Shariar (Shawn) Emami
  * @date August 28, 2022
  * 
- * Updated by:  Group NN
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
+ *  Updated by:  Group 01
+ *   040878158, Adam , Jenah (as from ACSIS)
+ *   studentId, Felipe, Barbosa (as from ACSIS)
+ *   041070895, Chamini Savindya, Demuni (as from ACSIS)
  *   
  */
 package acmecollege.entity;
@@ -53,9 +52,14 @@ public class CourseRegistration extends PojoBaseCompositeKey<CourseRegistrationP
 	private Student student;
 
 	//TODO CR01 - Add missing annotations.  Similar to student, this field is a part of the composite key of this entity.  Changes to this class should cascade.  Reference to a course is not optional.
+	@MapsId("courseId")
+	@ManyToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "course_id", referencedColumnName = "course_id", nullable = false)
 	private Course course;
 
 	//TODO CR02 - Add missing annotations.  Changes to this class should cascade.
+	@ManyToOne(cascade = CascadeType.ALL, optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "professor_id", referencedColumnName = "professor_id", nullable = true)
 	private Professor professor;
 
 	@Column(name = "numeric_grade")

@@ -18,11 +18,14 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -31,17 +34,24 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @SuppressWarnings("unused")
 @Entity
+@Table(name = "student")
+@NamedQuery(name = Student.ALL_STUDENTS_QUERY_NAME, query = "SELECT s FROM Student s")
+@NamedQuery(name = Student.QUERY_STUDENT_BY_ID, query = "SELECT s FROM Student s where s.id = :param1")
 //TODO ST01 - Add the missing annotations.
 //TODO ST02 - Do we need a mapped super class? If so, which one?
 public class Student extends PojoBase implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
+	 public static final String ALL_STUDENTS_QUERY_NAME = "Student.findAll";
+	 public static final String QUERY_STUDENT_BY_ID = "Student.findAllByID";
 
     public Student() {
     	super();
     }
 
     // TODO ST03 - Add annotation
-    @Column(name = "first_name")
+    @Basic(optional = false)
+    @Column(name = "first_name", nullable = false, length = 50)
 	private String firstName;
 
 	// TODO ST04 - Add annotation

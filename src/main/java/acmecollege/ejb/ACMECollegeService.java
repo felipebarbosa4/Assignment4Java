@@ -6,11 +6,10 @@
  * @author Shariar (Shawn) Emami
  * @author (original) Mike Norman
  * 
- * Updated by:  Group NN
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
+ *  Updated by:  Group 01
+ *   040878158, Adam , Jenah (as from ACSIS)
+ *   studentId, Felipe, Barbosa (as from ACSIS)
+ *   041070895, Chamini Savindya, Demuni (as from ACSIS)
  *
  */
 package acmecollege.ejb;
@@ -19,6 +18,9 @@ import static acmecollege.entity.StudentClub.ALL_STUDENT_CLUBS_QUERY_NAME;
 import static acmecollege.entity.StudentClub.SPECIFIC_STUDENT_CLUB_QUERY_NAME;
 import static acmecollege.entity.StudentClub.IS_DUPLICATE_QUERY_NAME;
 import static acmecollege.entity.Student.ALL_STUDENTS_QUERY_NAME;
+import static acmecollege.entity.MembershipCard.ID_CARD_QUERY_NAME;
+import static acmecollege.entity.ClubMembership.FIND_BY_ID;
+
 import static acmecollege.utility.MyConstants.DEFAULT_KEY_SIZE;
 import static acmecollege.utility.MyConstants.DEFAULT_PROPERTY_ALGORITHM;
 import static acmecollege.utility.MyConstants.DEFAULT_PROPERTY_ITERATIONS;
