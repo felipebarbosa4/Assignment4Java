@@ -1,6 +1,20 @@
+/**
+ * File:  StudentClubResource.java Course materials (23S) CST 8277
+ *
+ * @author Teddy Yap
+ * @author Shariar (Shawn) Emami
+ * @author (original) Mike Norman
+ * 
+ * Updated by:  Group 01
+ *   040878158, Adam , Jenah (as from ACSIS)
+ *   studentId, Felipe, Barbosa (as from ACSIS)
+ *   041070895, Chamini Savindya, Demuni (as from ACSIS)
+ * 
+ */
 package acmecollege.rest.resource;
 
 import static acmecollege.utility.MyConstants.ADMIN_ROLE;
+import static acmecollege.utility.MyConstants.USER_ROLE;
 import static acmecollege.utility.MyConstants.CLUB_MEMBERSHIP_RESOURCE_NAME;
 import static acmecollege.utility.MyConstants.RESOURCE_PATH_ID_ELEMENT;
 import static acmecollege.utility.MyConstants.RESOURCE_PATH_ID_PATH;
@@ -43,7 +57,7 @@ public class ClubMembershipResource {
     }
 
     @GET
-    @RolesAllowed({ADMIN_ROLE})
+    @RolesAllowed({ADMIN_ROLE, USER_ROLE})
     public Response getClubMemberships() {
         List<ClubMembership> clubMemberships = service.getAllClubMemberships();
         return Response.ok(clubMemberships).build();

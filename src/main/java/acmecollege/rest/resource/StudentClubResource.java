@@ -5,11 +5,10 @@
  * @author Shariar (Shawn) Emami
  * @author (original) Mike Norman
  * 
- * Updated by:  Group NN
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
- *   studentId, firstName, lastName (as from ACSIS)
+ * Updated by:  Group 01
+ *   040878158, Adam , Jenah (as from ACSIS)
+ *   studentId, Felipe, Barbosa (as from ACSIS)
+ *   041070895, Chamini Savindya, Demuni (as from ACSIS)
  * 
  */
 package acmecollege.rest.resource;
@@ -56,6 +55,7 @@ public class StudentClubResource {
     protected SecurityContext sc;
     
     @GET
+    @RolesAllowed({ADMIN_ROLE, USER_ROLE})
     public Response getStudentClubs() {
         LOG.debug("Retrieving all student clubs...");
         List<StudentClub> studentClubs = service.getAllStudentClubs();
