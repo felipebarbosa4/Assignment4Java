@@ -920,7 +920,7 @@ public class TestACMECollegeSystem {
 	            .path(String.valueOf(TID))
 	            .request()
 	            .delete();    		
-		assertThat(response.getStatus(), is(403)));
+		assertThat(response.getStatus(), is(403));
 	}
 	
 	/**
