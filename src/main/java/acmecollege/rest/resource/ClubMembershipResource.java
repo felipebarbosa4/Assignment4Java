@@ -1,6 +1,7 @@
 package acmecollege.rest.resource;
 
 import static acmecollege.utility.MyConstants.ADMIN_ROLE;
+import static acmecollege.utility.MyConstants.USER_ROLE;
 import static acmecollege.utility.MyConstants.CLUB_MEMBERSHIP_RESOURCE_NAME;
 import static acmecollege.utility.MyConstants.RESOURCE_PATH_ID_ELEMENT;
 import static acmecollege.utility.MyConstants.RESOURCE_PATH_ID_PATH;
@@ -43,7 +44,7 @@ public class ClubMembershipResource {
     }
 
     @GET
-    @RolesAllowed({ADMIN_ROLE})
+    @RolesAllowed({ADMIN_ROLE, USER_ROLE})
     public Response getClubMemberships() {
         List<ClubMembership> clubMemberships = service.getAllClubMemberships();
         return Response.ok(clubMemberships).build();

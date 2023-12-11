@@ -1,6 +1,7 @@
 package acmecollege.rest.resource;
 
 import static acmecollege.utility.MyConstants.ADMIN_ROLE;
+import static acmecollege.utility.MyConstants.USER_ROLE;
 import static acmecollege.utility.MyConstants.MEMBERSHIP_CARD_RESOURCE_NAME;
 import static acmecollege.utility.MyConstants.RESOURCE_PATH_ID_ELEMENT;
 import static acmecollege.utility.MyConstants.RESOURCE_PATH_ID_PATH;
@@ -51,7 +52,7 @@ public class MembershipCardResource {
     }
 
     @GET
-    @RolesAllowed({ADMIN_ROLE})
+    @RolesAllowed({ADMIN_ROLE,USER_ROLE})
     @Path(RESOURCE_PATH_ID_PATH)
     public Response getMembershipCardById(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id) {
         MembershipCard membershipCard = service.getMembershipCardById(id);
