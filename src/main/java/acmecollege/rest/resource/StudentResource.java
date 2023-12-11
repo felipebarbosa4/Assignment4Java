@@ -116,4 +116,17 @@ public class StudentResource {
         response = Response.ok(professor).build();
         return response;
     }
+
+    @DELETE
+    @RolesAllowed({ADMIN_ROLE})
+    @Path(RESOURCE_PATH_ID_PATH)
+    public Response deleteStudent(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id) {
+        LOG.debug("Attempting to delete student with ID: " + id);
+        boolean isDeleted = service.deleteStudentById(id);
+        if (isDeleted) {
+            return Response.status(Status.NO_CONTENT).build(); // or Status.OK if you prefer
+        } else {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+    }
 }
