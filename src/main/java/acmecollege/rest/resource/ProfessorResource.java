@@ -28,6 +28,9 @@ public class ProfessorResource {
     @EJB
     protected ACMECollegeService service;
 
+    @Inject
+    protected SecurityContext sc;
+
     @GET
     @RolesAllowed({ADMIN_ROLE})
     public Response getProfessors() {
