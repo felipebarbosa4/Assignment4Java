@@ -37,10 +37,13 @@ import javax.persistence.OneToOne;
  */
 @Entity
 @NamedQuery(name="SecurityUSer.userByName", query="SELECT u FROM SecurityUser u WHERE u.username = :param1")
+@NamedQuery(name = SecurityUser.FIND_BY_STUDENT_ID, query = "SELECT su FROM SecurityUser su WHERE su.student.id = :studentId")
 //TODO - Make this into JPA entity and add all the necessary annotations
 public class SecurityUser implements Serializable, Principal {
     /** Explicit set serialVersionUID */
     private static final long serialVersionUID = 1L;
+    
+    public static final String FIND_BY_STUDENT_ID = "SecurityUser.findByStudentId";
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

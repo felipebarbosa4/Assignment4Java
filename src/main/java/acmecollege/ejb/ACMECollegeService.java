@@ -20,6 +20,7 @@ import static acmecollege.entity.StudentClub.IS_DUPLICATE_QUERY_NAME;
 import static acmecollege.entity.Student.ALL_STUDENTS_QUERY_NAME;
 import static acmecollege.entity.MembershipCard.ID_CARD_QUERY_NAME;
 import static acmecollege.entity.ClubMembership.FIND_BY_ID;
+import static acmecollege.entity.SecurityUser.FIND_BY_STUDENT_ID;
 
 import static acmecollege.utility.MyConstants.DEFAULT_KEY_SIZE;
 import static acmecollege.utility.MyConstants.DEFAULT_PROPERTY_ALGORITHM;
@@ -181,7 +182,7 @@ public class ACMECollegeService implements Serializable {
                 /* TODO ACMECS02 - Use NamedQuery on SecurityRole to find this related Student
                    so that when we remove it, the relationship from SECURITY_USER table
                    is not dangling
-                */ em.createNamedQuery("SecurityUser.findByStudentId", SecurityUser.class)
+                */ em.createNamedQuery(SecurityUser.FIND_BY_STUDENT_ID, SecurityUser.class)
                 .setParameter("studentId", id);
      
             SecurityUser sUser = findUser.getSingleResult();
