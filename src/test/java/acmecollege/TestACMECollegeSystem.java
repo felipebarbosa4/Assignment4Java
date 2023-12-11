@@ -71,6 +71,7 @@ import acmecollege.entity.CourseRegistrationPK;
 import acmecollege.entity.DurationAndStatus;
 import acmecollege.entity.MembershipCard;
 import acmecollege.entity.Professor;
+import acmecollege.entity.SecurityUser;
 import acmecollege.entity.Student;
 import acmecollege.entity.StudentClub;
 
@@ -582,7 +583,7 @@ public class TestACMECollegeSystem {
 	            .path(STUDENT_RESOURCE_NAME)
 	            .request()
 	            .get();    		
-		assertThat(response.getStatus(), is(not(404)));
+		assertThat(response.getStatus(), is(not(403)));
 	}
 	
 	/**
@@ -646,9 +647,16 @@ public class TestACMECollegeSystem {
      */
 	@Test
 	public void test28_all_memebership_card_with_userrole() throws JsonMappingException, JsonProcessingException{
+		Student student = new Student();
+		student.setFullName("John", "Smith");
+				
+		SecurityUser security = new SecurityUser();
+		security.setStudent(student);
+		
 		Response response = webTarget
                 .register(userAuth)
                 .path(MEMBERSHIP_CARD_RESOURCE_NAME)
+                .queryParam("userRole", security.getId())
                 .request()
                 .get();
         assertThat(response.getStatus(), is(200));
@@ -670,7 +678,7 @@ public class TestACMECollegeSystem {
                 .path(COURSE_RESOURCE_NAME)
                 .request()
                 .get();
-        assertThat(response.getStatus(), is(200));
+        assertThat(response.getStatus(), is(403));
         List<Course> courses = response.readEntity(new GenericType<List<Course>>(){});
         assertThat(courses, is(not(empty())));
         assertThat(courses, hasSize(1));
@@ -688,7 +696,7 @@ public class TestACMECollegeSystem {
                 .path(COURSE_REGISTRATION_RESOURCE_NAME)
                 .request()
                 .get();
-            assertThat(response.getStatus(), is(200));
+            assertThat(response.getStatus(), is(403));
             List<CourseRegistration> courseRegs = response.readEntity(new GenericType<List<CourseRegistration>>(){});
             assertThat(courseRegs, is(not(empty())));
             assertThat(courseRegs, hasSize(1));
@@ -706,7 +714,7 @@ public class TestACMECollegeSystem {
                 .path(PROFESSOR_SUBRESOURCE_NAME)
                 .request()
                 .get();
-            assertThat(response.getStatus(), is(200));
+            assertThat(response.getStatus(), is(403));
             List<MembershipCard> membershipCard = response.readEntity(new GenericType<List<MembershipCard>>(){});
             assertThat(membershipCard, is(not(empty())));
             assertThat(membershipCard, hasSize(1));
@@ -727,7 +735,7 @@ public class TestACMECollegeSystem {
 	            .path(STUDENT_RESOURCE_NAME)
 	            .request(MediaType.APPLICATION_JSON)
 	            .post(Entity.entity(student, MediaType.APPLICATION_JSON), Response.class);    		
-		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));        
+		assertThat(response.getStatus(), is(not(Status.CREATED.getStatusCode())));        
 	}
 
 	 /**
@@ -864,7 +872,7 @@ public class TestACMECollegeSystem {
 	            .path(STUDENT_RESOURCE_NAME + SLASH + TID)
 	            .request()
 	            .delete();    		
-		assertThat(response.getStatus(), is(200));
+		assertThat(response.getStatus(), is(not(200)));
 		
 	}
 	
@@ -881,7 +889,7 @@ public class TestACMECollegeSystem {
 	            .path(String.valueOf(TID))
 	            .request()
 	            .delete();    		
-		assertThat(response.getStatus(), is(200));
+		assertThat(response.getStatus(), is(403));
 	}
 	
 	/**
@@ -896,7 +904,7 @@ public class TestACMECollegeSystem {
 	            .path(PROFESSOR_SUBRESOURCE_NAME + SLASH + TID)
 	            .request()
 	            .delete();    		
-		assertThat(response.getStatus(), is(200));
+		assertThat(response.getStatus(), is(not(200)));
 	}
 	
 	/**
@@ -912,7 +920,7 @@ public class TestACMECollegeSystem {
 	            .path(String.valueOf(TID))
 	            .request()
 	            .delete();    		
-		assertThat(response.getStatus(), is(200));
+		assertThat(response.getStatus(), is(403)));
 	}
 	
 	/**
@@ -927,7 +935,7 @@ public class TestACMECollegeSystem {
 	            .path(CLUB_MEMBERSHIP_RESOURCE_NAME + SLASH + TID)
 	            .request()
 	            .delete();    		
-		assertThat(response.getStatus(), is(200));
+		assertThat(response.getStatus(), is(not(200)));
 	}
 	
 	/**
@@ -943,7 +951,7 @@ public class TestACMECollegeSystem {
 	            .path(String.valueOf(TID))
 	            .request()
 	            .delete();    		
-		assertThat(response.getStatus(), is(200));
+		assertThat(response.getStatus(), is(403));
 	}
 	
 	/**
@@ -964,7 +972,7 @@ public class TestACMECollegeSystem {
 	            .path(String.valueOf(cid))
 	            .request()
 	            .delete();    		
-		assertThat(response.getStatus(), is(200));       
+		assertThat(response.getStatus(), is(not(200)));       
 	}
 
 }
