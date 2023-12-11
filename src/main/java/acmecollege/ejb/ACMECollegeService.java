@@ -58,6 +58,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import acmecollege.entity.ClubMembership;
+import acmecollege.entity.Course;
 import acmecollege.entity.CourseRegistration;
 import acmecollege.entity.MembershipCard;
 import acmecollege.entity.Professor;
@@ -253,6 +254,8 @@ public class ACMECollegeService implements Serializable {
         return newStudentClub;
     }
 
+    
+    // CRUD Operations for ClubMembership
     @Transactional
     public StudentClub updateStudentClub(int id, StudentClub updatingStudentClub) {
     	StudentClub studentClubToBeUpdated = getStudentClubById(id);
@@ -288,4 +291,172 @@ public class ACMECollegeService implements Serializable {
         return clubMembershipToBeUpdated;
     }
     
+
+
+    
+
+    // Read (All)
+    public List<ClubMembership> getAllClubMemberships() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ClubMembership> cq = cb.createQuery(ClubMembership.class);
+        cq.select(cq.from(ClubMembership.class));
+        return em.createQuery(cq).getResultList();
+    }
+
+ 
+
+    // Delete
+    @Transactional
+    public boolean deleteClubMembershipById(int id) {
+        ClubMembership clubMembership = getClubMembershipById(id);
+        if (clubMembership != null) {
+            em.remove(clubMembership);
+            return true;
+        }
+        return false;
+    }
+    
+    
+    // CRUD Operations for Professor
+
+    // Create
+    @Transactional
+    public Professor persistProfessor(Professor newProfessor) {
+        em.persist(newProfessor);
+        return newProfessor;
+    }
+
+    // Read (All)
+    public List<Professor> getAllProfessors() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Professor> cq = cb.createQuery(Professor.class);
+        cq.select(cq.from(Professor.class));
+        return em.createQuery(cq).getResultList();
+    }
+
+    // Read (Single)
+    public Professor getProfessorById(int id) {
+        return em.find(Professor.class, id);
+    }
+
+    // Update
+    @Transactional
+    public Professor updateProfessorById(int id, Professor updatedProfessor) {
+        Professor existingProfessor = getProfessorById(id);
+        if (existingProfessor != null) {
+            existingProfessor.setFirstName(updatedProfessor.getFirstName());
+            existingProfessor.setLastName(updatedProfessor.getLastName());
+            existingProfessor.setDepartment(updatedProfessor.getDepartment());
+            // Set other fields as needed
+            em.merge(existingProfessor);
+            return existingProfessor;
+        }
+        return null;
+    }
+
+    // Delete
+    @Transactional
+    public boolean deleteProfessorById(int id) {
+        Professor professor = getProfessorById(id);
+        if (professor != null) {
+            em.remove(professor);
+            return true;
+        }
+        return false;
+    }
+    
+ // CRUD Operations for Course
+
+    // Create
+    @Transactional
+    public Course persistCourse(Course newCourse) {
+        em.persist(newCourse);
+        return newCourse;
+    }
+
+    // Read (All)
+    public List<Course> getAllCourses() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Course> cq = cb.createQuery(Course.class);
+        cq.select(cq.from(Course.class));
+        return em.createQuery(cq).getResultList();
+    }
+
+    // Read (Single)
+    public Course getCourseById(int id) {
+        return em.find(Course.class, id);
+    }
+
+    // Update
+    @Transactional
+    public Course updateCourse(int id, Course updatedCourse) {
+        Course existingCourse = getCourseById(id);
+        if (existingCourse != null) {
+            existingCourse.setCourseCode(updatedCourse.getCourseCode());
+            existingCourse.setCourseTitle(updatedCourse.getCourseTitle());
+            // Update other relevant fields as needed
+            em.merge(existingCourse);
+            return existingCourse;
+        }
+        return null;
+    }
+
+    // Delete
+    @Transactional
+    public boolean deleteCourseById(int id) {
+        Course course = getCourseById(id);
+        if (course != null) {
+            em.remove(course);
+            return true; // Indicate success
+        }
+        return false; // Indicate failure or not found
+    }
+    
+ // CRUD Operations for MembershipCard
+
+    // Create
+    @Transactional
+    public MembershipCard persistMembershipCard(MembershipCard newMembershipCard) {
+        em.persist(newMembershipCard);
+        return newMembershipCard;
+    }
+
+    // Read (All)
+    public List<MembershipCard> getAllMembershipCards() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<MembershipCard> cq = cb.createQuery(MembershipCard.class);
+        cq.select(cq.from(MembershipCard.class));
+        return em.createQuery(cq).getResultList();
+    }
+
+    // Read (Single)
+    public MembershipCard getMembershipCardById(int id) {
+        return em.find(MembershipCard.class, id);
+    }
+
+    // Update
+    @Transactional
+    public MembershipCard updateMembershipCard(int id, MembershipCard updatedMembershipCard) {
+        MembershipCard existingMembershipCard = getMembershipCardById(id);
+        if (existingMembershipCard != null) {
+            // Update relevant fields
+            // Example: existingMembershipCard.setSomeField(updatedMembershipCard.getSomeField());
+            em.merge(existingMembershipCard);
+            return existingMembershipCard;
+        }
+        return null;
+    }
+
+    // Delete
+    @Transactional
+    public boolean deleteMembershipCardById(int id) {
+        MembershipCard membershipCard = getMembershipCardById(id);
+        if (membershipCard != null) {
+            em.remove(membershipCard);
+            return true; // Indicate success
+        }
+        return false; // Indicate failure or not found
+    }
+
+
 }

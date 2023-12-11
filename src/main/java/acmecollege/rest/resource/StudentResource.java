@@ -28,6 +28,7 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.security.enterprise.SecurityContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -121,12 +122,13 @@ public class StudentResource {
     @RolesAllowed({ADMIN_ROLE})
     @Path(RESOURCE_PATH_ID_PATH)
     public Response deleteStudent(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id) {
-        LOG.debug("Attempting to delete student with ID: " + id);
-        boolean isDeleted = service.deleteStudentById(id);
-        if (isDeleted) {
-            return Response.status(Status.NO_CONTENT).build(); // or Status.OK if you prefer
+        Student student = service.getStudentById(id);
+        if (student != null) {
+            service.deleteStudentById(id);
+            return Response.status(Response.Status.NO_CONTENT).build();
         } else {
-            return Response.status(Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
+
 }
