@@ -35,6 +35,7 @@ import static org.hamcrest.collection.IsEmptyCollection.empty;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.ws.rs.PathParam;
@@ -62,9 +63,12 @@ import org.junit.jupiter.api.TestMethodOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import acmecollege.entity.AcademicStudentClub;
 import acmecollege.entity.ClubMembership;
 import acmecollege.entity.Course;
 import acmecollege.entity.CourseRegistration;
+import acmecollege.entity.CourseRegistrationPK;
+import acmecollege.entity.DurationAndStatus;
 import acmecollege.entity.MembershipCard;
 import acmecollege.entity.Professor;
 import acmecollege.entity.Student;
@@ -288,7 +292,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test12_student_associate_professor_course_with_adminrole() throws JsonMappingException, JsonProcessingException{
+	public void test10_student_associate_professor_course_with_adminrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            //.register(userAuth)
 	            .register(adminAuth)
@@ -306,7 +310,7 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
 	@Test
-	public void test09_add_student_with_adminrole() throws JsonMappingException, JsonProcessingException{
+	public void test11_add_student_with_adminrole() throws JsonMappingException, JsonProcessingException{
 		Student student = new Student();
 		student.setFullName("John", "Petter");
 		
@@ -324,17 +328,15 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
     @Test
-    public void test10_add_course_with_adminrole() throws JsonMappingException, JsonProcessingException{
-        Course course = new Course("CST8333", "Programming Language Research", 2023, "Fall", 3, 0);
+    public void test12_add_course_with_adminrole() throws JsonMappingException, JsonProcessingException{
+        Course course = new Course("CST8333", "Programming Language Research", 2023, "Fall", 3, (byte)0);
         Response response = webTarget
 	            //.register(userAuth)
 	            .register(adminAuth)
-	            .path(COURSE_RESOURCE_NAME)
-	            .queryParam(HOST)
+	            .path(COURSE_RESOURCE_NAME)	            
 	            .request()
 	            .post(Entity.entity(course, MediaType.APPLICATION_JSON), Response.class);    		
 		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));
-		// courseId = response.getId();
     }
 
     /**
@@ -343,30 +345,31 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
     @Test
-    public void test11_add_course_registration_with_adminrole() throws JsonMappingException, JsonProcessingException{
+    public void test13_add_course_registration_with_adminrole() throws JsonMappingException, JsonProcessingException{
         Professor prof = new Professor();
-        prof.setFirstName("Jason");
-        prof.setLastName("Mack");
-        prof.setDepartment("Information Technology");
-        prof.setHighestEducationalDegree("Master");
-        prof.setSpecialization("Information Technology");
-
+        prof.setFirstName("Teddy");
+        prof.setLastName("Yap");
+        prof.setDepartment("Information and Communications Technology");
+        
+        Student student = new Student();
+		student.setFullName("John", "Petter");
+		
+		Course course = new Course("CST8333", "Programming Language Research", 2023, "Fall", 3, (byte)0);
+        
         CourseRegistration courseReg = new CourseRegistration();
-        courseReg.setStudent(new Student().setFullName("John", "Petter"));
-        courseReg.setCourse(new Course("CST8333", "Programming Language Research", 2023, "Fall", 3, 0));
+        courseReg.setStudent(student);
+        courseReg.setCourse(course);
         courseReg.setProfessor(prof);
-        courseReg.setNumericGrade(2.90);
+        courseReg.setNumericGrade(100);
         courseReg.setLetterGrade("A+");
 
         Response response = webTarget
 	            //.register(userAuth)
 	            .register(adminAuth)
-	            .path(COURSE_REGISTRATION_RESOURCE_NAME)
-	            .queryParam(HOST)
+	            .path(COURSE_REGISTRATION_RESOURCE_NAME)	            
 	            .request()
 	            .post(Entity.entity(courseReg, MediaType.APPLICATION_JSON), Response.class);    		
 		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));
-		// courseRegId = response.getId();
     }
 
     /**
@@ -375,15 +378,28 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test12_add_Membership_card_with_adminrole() throws JsonMappingException, JsonProcessingException{
+	public void test14_add_Membership_card_with_adminrole() throws JsonMappingException, JsonProcessingException{
+		StudentClub studentClub = new AcademicStudentClub();
+        studentClub.setName("Interactive Media Club");
+        
+        DurationAndStatus DurationStatus = new DurationAndStatus();
+        DurationStatus.setStartDate(LocalDateTime.now());
+        DurationStatus.setEndDate(LocalDateTime.now());
+        DurationStatus.setActive((byte)1);
+        
+		ClubMembership Club = new ClubMembership();
+		Club.setStudentClub(studentClub);
+		Club.setDurationAndStatus(DurationStatus);
+		
+		Student student = new Student();
+		student.setFullName("John", "Petter");
 	
-		MembershipCard member = new MembershipCard(1, 1, (byte) 1);
+		MembershipCard member = new MembershipCard(Club, student, (byte) 1);
 		
 		Response response = webTarget
 	            //.register(userAuth)
 	            .register(adminAuth)
-	            .path(MEMBERSHIP_CARD_RESOURCE_NAME)
-	            .queryParam(HOST)
+	            .path(MEMBERSHIP_CARD_RESOURCE_NAME)	            
 	            .request()
 	            .post(Entity.entity(member, MediaType.APPLICATION_JSON), Response.class);    		
 		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));
@@ -396,41 +412,38 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test_add_student_club_with_adminrole() throws JsonMappingException, JsonProcessingException{
+	public void test15_add_student_club_with_adminrole() throws JsonMappingException, JsonProcessingException{
 	
-		StudentClub studentClub = new StudentClub(false);
+		StudentClub studentClub = new AcademicStudentClub();
         studentClub.setName("Interactive Media Club");
 		
 		Response response = webTarget
 	            .register(adminAuth)
-	            .path(STUDENT_CLUB_RESOURCE_NAME)
-	            .queryParam(HOST)
+	            .path(STUDENT_CLUB_RESOURCE_NAME)	            
 	            .request()
 	            .post(Entity.entity(studentClub, MediaType.APPLICATION_JSON), Response.class);    		
 		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));
 		
 	}
-
-    /**
-	 * Upate new student club with ADMINROLE
+	
+	/**
+	 * Add professor with ADMINROLE
 	 * @throws JsonMappingException
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test_add_student_club_with_adminrole() throws JsonMappingException, JsonProcessingException{
-	
-		StudentClub studentClub = new StudentClub(false);
-        studentClub.setName("Vollyball club");
-		
-		Response response = webTarget
+	public void test16_add_professor_with_adminrole() throws JsonMappingException, JsonProcessingException{
+		Professor prof = new Professor();
+        prof.setFirstName("Jason");
+        prof.setLastName("Mack");
+        prof.setDepartment("Information and Communications Technology");
+        
+        Response response = webTarget
 	            .register(adminAuth)
-	            .path(STUDENT_CLUB_RESOURCE_NAME)
-	            .queryParam(HOST)
+	            .path(PROFESSOR_SUBRESOURCE_NAME)	           
 	            .request()
-	            .post(Entity.entity(studentClub, MediaType.APPLICATION_JSON), Response.class);    		
-		assertThat(response.getStatus(), is(200));
-        assertThat(response.getLogger())
-		
+	            .post(Entity.entity(prof, MediaType.APPLICATION_JSON), Response.class);    		
+		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));
 	}
 	
 	/**
@@ -439,7 +452,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test13_delete_student_adminrole() throws JsonMappingException, JsonProcessingException{
+	public void test17_delete_student_adminrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            //.register(userAuth)
 	            .register(adminAuth)
@@ -456,7 +469,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test14_delete_course_adminrole() throws JsonMappingException, JsonProcessingException{
+	public void test18_delete_course_adminrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            //.register(userAuth)
 	            .register(adminAuth)
@@ -473,7 +486,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test15_delete_professor_adminrole() throws JsonMappingException, JsonProcessingException{
+	public void test19_delete_professor_adminrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            //.register(userAuth)
 	            .register(adminAuth)
@@ -489,7 +502,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test16_delete_student_club_adminrole() throws JsonMappingException, JsonProcessingException{
+	public void test20_delete_student_club_adminrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            //.register(userAuth)
 	            .register(adminAuth)
@@ -506,7 +519,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test17_delete_club_memebership_adminrole() throws JsonMappingException, JsonProcessingException{
+	public void test21_delete_club_memebership_adminrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            //.register(userAuth)
 	            .register(adminAuth)
@@ -522,7 +535,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test18_delete_memebership_card_adminrole() throws JsonMappingException, JsonProcessingException{
+	public void test22_delete_memebership_card_adminrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            //.register(userAuth)
 	            .register(adminAuth)
@@ -539,12 +552,17 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test19_delete_course_registration_adminrole() throws JsonMappingException, JsonProcessingException{
+	public void test23_delete_course_registration_adminrole() throws JsonMappingException, JsonProcessingException{
+		CourseRegistrationPK CSPK = new CourseRegistrationPK(1,2);
+		CourseRegistration courseReg = new CourseRegistration();
+		courseReg.setId(CSPK);
+		int cid = courseReg.getNumericGrade();
+		
 		Response response = webTarget
 	            //.register(userAuth)
 	            .register(adminAuth)
 	            .path(COURSE_REGISTRATION_RESOURCE_NAME)
-	            .path(String.valueOf(1),String.valueOf(2))
+	            .path(String.valueOf(cid))
 	            .request()
 	            .delete();    		
 		assertThat(response.getStatus(), is(200));
@@ -558,7 +576,7 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
 	@Test
-	public void test20_all_student_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test24_all_student_with_userrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            .register(userAuth)
 	            .path(STUDENT_RESOURCE_NAME)
@@ -573,7 +591,7 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
 	@Test
-	public void test21_a_student_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test25_a_student_with_userrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            .register(userAuth)
 	            .path(STUDENT_RESOURCE_NAME)
@@ -591,7 +609,7 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
 	@Test
-	public void test22_all_clubmembership_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test26_all_clubmembership_with_userrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 				.register(userAuth)
 				.path(CLUB_MEMBERSHIP_RESOURCE_NAME)
@@ -609,7 +627,7 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
 	@Test
-    public void test23_all_student_club_with_userrole() throws JsonMappingException, JsonProcessingException{
+    public void test27_all_student_club_with_userrole() throws JsonMappingException, JsonProcessingException{
     	Response response = webTarget
                 .register(userAuth)                
                 .path(STUDENT_CLUB_RESOURCE_NAME)
@@ -627,7 +645,7 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
 	@Test
-	public void test24_all_memebership_card_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test28_all_memebership_card_with_userrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
                 .register(userAuth)
                 .path(MEMBERSHIP_CARD_RESOURCE_NAME)
@@ -645,7 +663,7 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
 	@Test
-	public void test25_all_course_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test29_all_course_with_userrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
                 //.register(userAuth)
                 .register(adminAuth)
@@ -664,7 +682,7 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
     @Test
-    public void test26_all_course_registration_with_userrole() throws JsonMappingException, JsonProcessingException{
+    public void test30_all_course_registration_with_userrole() throws JsonMappingException, JsonProcessingException{
     	Response response = webTarget
                 .register(userAuth)
                 .path(COURSE_REGISTRATION_RESOURCE_NAME)
@@ -682,7 +700,7 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
     @Test
-    public void test27_all_professor_registration_with_userrole() throws JsonMappingException, JsonProcessingException{
+    public void test31_all_professor_registration_with_userrole() throws JsonMappingException, JsonProcessingException{
     	Response response = webTarget
                 .register(userAuth)
                 .path(PROFESSOR_SUBRESOURCE_NAME)
@@ -700,7 +718,7 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
 	@Test
-	public void test28_add_student_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test32_add_student_with_userrole() throws JsonMappingException, JsonProcessingException{
 		Student student = new Student();
 		student.setFullName("Loly", "Den");
 		
@@ -709,26 +727,23 @@ public class TestACMECollegeSystem {
 	            .path(STUDENT_RESOURCE_NAME)
 	            .request(MediaType.APPLICATION_JSON)
 	            .post(Entity.entity(student, MediaType.APPLICATION_JSON), Response.class);    		
-		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));
-        stid = response.getId();
+		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));        
 	}
 
-    /**
+	 /**
      * Add new course with USERROLE
      * @throws JsonMappingException
      * @throws JsonProcessingException
      */
     @Test
-    public void test29_add_course_with_userrole() throws JsonMappingException, JsonProcessingException{
-        Course course = new Course("CST8333", "Programming Language Research", 2023, "Fall", 3, 0);
+    public void test33_add_course_with_userrole() throws JsonMappingException, JsonProcessingException{
+        Course course = new Course("CST8333", "Programming Language Research", 2023, "Fall", 3, (byte)0);
         Response response = webTarget
-	            .register(userAuth)
-	            .path(COURSE_RESOURCE_NAME)
-	            .queryParam(HOST)
+	            .register(userAuth)	            
+	            .path(COURSE_RESOURCE_NAME)	            
 	            .request()
 	            .post(Entity.entity(course, MediaType.APPLICATION_JSON), Response.class);    		
-		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));
-		courseId = response.getId();
+		assertThat(response.getStatus(), is(not(Status.CREATED.getStatusCode())));
     }
 
     /**
@@ -737,29 +752,30 @@ public class TestACMECollegeSystem {
      * @throws JsonProcessingException
      */
     @Test
-    public void test30_add_course_registration_with_userrole() throws JsonMappingException, JsonProcessingException{
+    public void test34_add_course_registration_with_userrole() throws JsonMappingException, JsonProcessingException{
         Professor prof = new Professor();
-        prof.setFirstName("Jason");
-        prof.setLastName("Mack");
-        prof.setDepartment("Information Technology");
-        prof.setHighestEducationalDegree("Master");
-        prof.setSpecialization("Information Technology");
-
+        prof.setFirstName("Teddy");
+        prof.setLastName("Yap");
+        prof.setDepartment("Information and Communications Technology");
+        
+        Student student = new Student();
+		student.setFullName("John", "Petter");
+		
+		Course course = new Course("CST8333", "Programming Language Research", 2023, "Fall", 3, (byte)0);
+        
         CourseRegistration courseReg = new CourseRegistration();
-        courseReg.setStudent(new Student().setFullName("John", "Petter"));
-        courseReg.setCourse(new Course("CST8333", "Programming Language Research", 2023, "Fall", 3, 0));
+        courseReg.setStudent(student);
+        courseReg.setCourse(course);
         courseReg.setProfessor(prof);
-        courseReg.setNumericGrade(2.90);
+        courseReg.setNumericGrade(100);
         courseReg.setLetterGrade("A+");
 
         Response response = webTarget
 	            .register(userAuth)
-	            .path(COURSE_REGISTRATION_RESOURCE_NAME)
-	            .queryParam(HOST)
+	            .path(COURSE_REGISTRATION_RESOURCE_NAME)	            
 	            .request()
 	            .post(Entity.entity(courseReg, MediaType.APPLICATION_JSON), Response.class);    		
-		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));
-		courseRegId = response.getId();
+		assertThat(response.getStatus(), is(not(Status.CREATED.getStatusCode())));
     }
 
     /**
@@ -768,18 +784,31 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test_add_Membership_card_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test35_add_Membership_card_with_userrole() throws JsonMappingException, JsonProcessingException{
+		StudentClub studentClub = new AcademicStudentClub();
+        studentClub.setName("Interactive Media Club");
+        
+        DurationAndStatus DurationStatus = new DurationAndStatus();
+        DurationStatus.setStartDate(LocalDateTime.now());
+        DurationStatus.setEndDate(LocalDateTime.now());
+        DurationStatus.setActive((byte)1);
+        
+		ClubMembership Club = new ClubMembership();
+		Club.setStudentClub(studentClub);
+		Club.setDurationAndStatus(DurationStatus);
+		
+		Student student = new Student();
+		student.setFullName("John", "Petter");
 	
-		MembershipCard member = new MembershipCard(1, 1, (byte) 1);
+		MembershipCard member = new MembershipCard(Club, student, (byte) 1);
 		
 		Response response = webTarget
 	            .register(userAuth)
-	            .path(MEMBERSHIP_CARD_RESOURCE_NAME)
-	            .queryParam(HOST)
+	            .path(MEMBERSHIP_CARD_RESOURCE_NAME)	            
 	            .request()
 	            .post(Entity.entity(member, MediaType.APPLICATION_JSON), Response.class);    		
-		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));
-		MemebrshipCardId = response.getId();
+		assertThat(response.getStatus(), is(not(Status.CREATED.getStatusCode())));
+		// MemebrshipCardId = response.getId();
 	}
 
     /**
@@ -788,20 +817,40 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test_add_student_club_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test36_add_student_club_with_userrole() throws JsonMappingException, JsonProcessingException{
 	
-		StudentClub studentClub = new StudentClub(false);
-        studentClub.setName("Volunteer Club");
+		StudentClub studentClub = new AcademicStudentClub();
+        studentClub.setName("Interactive Media Club");
 		
 		Response response = webTarget
 	            .register(userAuth)
-	            .path(STUDENT_CLUB_RESOURCE_NAME)
-	            .queryParam(HOST)
+	            .path(STUDENT_CLUB_RESOURCE_NAME)	            
 	            .request()
 	            .post(Entity.entity(studentClub, MediaType.APPLICATION_JSON), Response.class);    		
-		assertThat(response.getStatus(), is(Status.CREATED.getStatusCode()));
+		assertThat(response.getStatus(), is(not(Status.CREATED.getStatusCode())));
 		
 	}
+	
+	/**
+	 * Add professor with USERROLE
+	 * @throws JsonMappingException
+	 * @throws JsonProcessingException
+	 */
+	@Test
+	public void test37_add_professor_with_userrole() throws JsonMappingException, JsonProcessingException{
+		Professor prof = new Professor();
+        prof.setFirstName("Jason");
+        prof.setLastName("Mack");
+        prof.setDepartment("Information and Communications Technology");
+        
+        Response response = webTarget
+	            .register(userAuth)
+	            .path(PROFESSOR_SUBRESOURCE_NAME)	           
+	            .request()
+	            .post(Entity.entity(prof, MediaType.APPLICATION_JSON), Response.class);    		
+		assertThat(response.getStatus(), is(not(Status.CREATED.getStatusCode())));
+	}
+	
 
     /**
 	 * Delete student with USERROLE
@@ -809,7 +858,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test28_delete_student_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test38_delete_student_with_userrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            .register(userAuth)
 	            .path(STUDENT_RESOURCE_NAME + SLASH + TID)
@@ -825,7 +874,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test12_delete_course_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test32_delete_course_with_userrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            .register(userAuth)
 	            .path(COURSE_RESOURCE_NAME)
@@ -841,7 +890,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test13_delete_professor_with_userrolee() throws JsonMappingException, JsonProcessingException{
+	public void test40_delete_professor_with_userrolee() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            .register(userAuth)
 	            .path(PROFESSOR_SUBRESOURCE_NAME + SLASH + TID)
@@ -856,7 +905,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test14_delete_student_club_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test41_delete_student_club_with_userrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            .register(userAuth)
 	            .path(STUDENT_CLUB_RESOURCE_NAME)
@@ -872,7 +921,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test15_delete_club_memebership_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test42_delete_club_memebership_with_userrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            .register(userAuth)
 	            .path(CLUB_MEMBERSHIP_RESOURCE_NAME + SLASH + TID)
@@ -887,7 +936,7 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test16_delete_memebership_card_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test43_delete_memebership_card_with_userrole() throws JsonMappingException, JsonProcessingException{
 		Response response = webTarget
 	            .register(userAuth)
 	            .path(MEMBERSHIP_CARD_RESOURCE_NAME)
@@ -903,15 +952,19 @@ public class TestACMECollegeSystem {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void test17_delete_course_registration_with_userrole() throws JsonMappingException, JsonProcessingException{
+	public void test44_delete_course_registration_with_userrole() throws JsonMappingException, JsonProcessingException{
+		CourseRegistrationPK CSPK = new CourseRegistrationPK(1,2);
+		CourseRegistration courseReg = new CourseRegistration();
+		courseReg.setId(CSPK);
+		int cid = courseReg.getNumericGrade();
+		
 		Response response = webTarget
 	            .register(userAuth)
 	            .path(COURSE_REGISTRATION_RESOURCE_NAME)
-	            .path(String.valueOf(TID))
+	            .path(String.valueOf(cid))
 	            .request()
 	            .delete();    		
-		assertThat(response.getStatus(), is(200));
-        assertThat(response.getId(), is(TID))
+		assertThat(response.getStatus(), is(200));       
 	}
 
 }
