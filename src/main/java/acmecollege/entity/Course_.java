@@ -5,9 +5,9 @@ import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2023-12-10T15:11:02.548-0500")
+@Generated(value="Dali", date="2023-12-10T21:46:27.511-0500")
 @StaticMetamodel(Course.class)
-public class Course_ {
+public class Course_ extends PojoBase_ {
 	public static volatile SingularAttribute<Course, String> courseCode;
 	public static volatile SingularAttribute<Course, String> courseTitle;
 	public static volatile SingularAttribute<Course, Integer> year;

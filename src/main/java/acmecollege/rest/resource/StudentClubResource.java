@@ -66,6 +66,7 @@ public class StudentClubResource {
     
     @GET
     // TODO SCR01 - Specify the roles allowed for this method
+    
     @Path("/{studentClubId}")
     public Response getStudentClubById(@PathParam("studentClubId") int studentClubId) {
         LOG.debug("Retrieving student club with id = {}", studentClubId);

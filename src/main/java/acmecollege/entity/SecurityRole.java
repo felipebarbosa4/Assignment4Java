@@ -30,7 +30,7 @@ import javax.persistence.NamedQuery;
 //TODO SR01 - Make this into JPA entity and add all necessary annotations
 @Entity
 @NamedQuery(name="SecurityRole.findByRoleName", query="SELECT r FROM SecurityRole r WHERE r.roleName = :roleName")
-public class SecurityRole implements Serializable {
+public class SecurityRole extends PojoBase implements Serializable {
     /** Explicit set serialVersionUID */
     private static final long serialVersionUID = 1L;
 
